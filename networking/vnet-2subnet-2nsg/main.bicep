@@ -12,26 +12,20 @@ param adminUsername string
   'sshPublicKey'
   'password'
 ])
-param authenticationType string = 'password'
+param authenticationType string = 'sshPublicKey'
 
 @description('SSH Key or password for the Virtual Machine. SSH key is recommended.')
 @secure()
 param adminPasswordOrKey string
 
-@description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
+@description('Unique DNS Name for the Public IP used to access the Virtual Machine of Subnet1.')
 param dnsLabelPrefixVm1 string = toLower('vm1-${uniqueString(resourceGroup().id)}')
 
 
-@description('Unique DNS Name for the Public IP used to access the Virtual Machine.')
+@description('Unique DNS Name for the Public IP used to access the Virtual Machine of Subnet2.')
 param dnsLabelPrefixVm2 string = toLower('vm2-${uniqueString(resourceGroup().id)}')
 
-@description('The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version.')
-@allowed([
-  '12.04.5-LTS'
-  '14.04.5-LTS'
-  '16.04.0-LTS'
-  '18.04-LTS'
-])
+@description('The Ubuntu version for the VMs.')
 param ubuntuOSVersion string = '18.04-LTS'
 
 @description('Location for all resources.')
@@ -43,16 +37,16 @@ param vmSize string = 'Standard_B2s'
 @description('Name of the VNET')
 param virtualNetworkName string = 'vNet'
 
-@description('Name of the subnet1 in the virtual network')
+@description('Name of Subnet1 in the virtual network')
 param subnet1Name string = 'Subnet1'
 
-@description('Name of the subnet2 in the virtual network')
+@description('Name of Subnet2 in the virtual network')
 param subnet2Name string = 'Subnet2'
 
-@description('Name of the Network Security Group for Subnet 1')
+@description('Name of the Network Security Group for Subnet1')
 param networkSecurityGroupName1 string = '${subnet1Name}-nsg'
 
-@description('Name of the Network Security Group for Subnet 2')
+@description('Name of the Network Security Group for Subnet2')
 param networkSecurityGroupName2 string = '${subnet2Name}-nsg'
 
 var publicIPAddressNameVm1 = '${vm1Name}PublicIP'
@@ -69,7 +63,7 @@ var linuxConfiguration = {
     publicKeys: [
       {
         path: '/home/${adminUsername}/.ssh/authorized_keys'
-        keyData: adminPasswordOrKey
+        keyData: 'adminPasswordOrKey'
       }
     ]
   }
