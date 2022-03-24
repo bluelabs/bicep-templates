@@ -1,0 +1,21 @@
+name: deploy-vnet-2subnet
+
+on: [workflow_dispatch]
+
+env:
+    AZURE_RESOURCEGROUP_NAME: vnet2subnet-rg
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/arm-deploy@v1
+      with:
+        deploymentName: ${{ github.run_number }}
+        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        template: ./networking/vnet-2subnet-2nsg/main.bicep
+        parameters:  adminPasswordOrKey=${{ secrets.KEY_DATA }}
