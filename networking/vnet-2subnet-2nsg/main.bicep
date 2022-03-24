@@ -5,7 +5,7 @@ param vm1Name string = 'vm1'
 param vm2Name string = 'vm2'
 
 @description('Username for the Virtual Machine.')
-param adminUsername string
+param adminUsername string = 'madebygps'
 
 @description('Type of authentication to use on the Virtual Machine. SSH key is recommended.')
 @allowed([
@@ -15,15 +15,10 @@ param adminUsername string
 param authenticationType string = 'sshPublicKey'
 
 @description('SSH Key or password for the Virtual Machine. SSH key is recommended.')
-@secure()
 param adminPasswordOrKey string
 
 @description('Unique DNS Name for the Public IP used to access the Virtual Machine of Subnet1.')
 param dnsLabelPrefixVm1 string = toLower('vm1-${uniqueString(resourceGroup().id)}')
-
-
-@description('Unique DNS Name for the Public IP used to access the Virtual Machine of Subnet2.')
-param dnsLabelPrefixVm2 string = toLower('vm2-${uniqueString(resourceGroup().id)}')
 
 @description('The Ubuntu version for the VMs.')
 param ubuntuOSVersion string = '18.04-LTS'
@@ -51,7 +46,6 @@ param networkSecurityGroupName2 string = '${subnet2Name}-nsg'
 
 var publicIPAddressNameVm1 = '${vm1Name}PublicIP'
 var networkInterfaceNameVm1 = '${vm1Name}NetInt'
-var publicIPAddressNameVm2 = '${vm2Name}PublicIP'
 var networkInterfaceNameVm2 = '${vm2Name}NetInt'
 var osDiskType = 'Standard_LRS'
 var subnet1AddressPrefix = '10.1.0.0/24'
@@ -63,7 +57,7 @@ var linuxConfiguration = {
     publicKeys: [
       {
         path: '/home/${adminUsername}/.ssh/authorized_keys'
-        keyData: 'adminPasswordOrKey'
+        keyData: adminPasswordOrKey
       }
     ]
   }
@@ -127,9 +121,6 @@ resource nic2 'Microsoft.Network/networkInterfaces@2020-06-01' = {
             id: subnet2.id
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIP2.id
-          }
         }
       }
     ]
@@ -246,22 +237,6 @@ resource vm1 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   }
 }
 
-resource publicIP2 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressNameVm2
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Dynamic'
-    publicIPAddressVersion: 'IPv4'
-    dnsSettings: {
-      domainNameLabel: dnsLabelPrefixVm2
-    }
-    idleTimeoutInMinutes: 4
-  }
-}
-
 resource vm2 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vm2Name
   location: location
@@ -299,10 +274,6 @@ resource vm2 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   }
 }
 
-output adminUsername string = adminUsername
+
 output hostname1 string = publicIP1.properties.dnsSettings.fqdn
-output sshCommand1 string = 'ssh ${adminUsername}@${publicIP1.properties.dnsSettings.fqdn}'
 
-
-output hostname2 string = publicIP2.properties.dnsSettings.fqdn
-output sshComman2d string = 'ssh ${adminUsername}@${publicIP2.properties.dnsSettings.fqdn}'
