@@ -232,7 +232,7 @@ resource vm1 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       computerName: vm1Name
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
-      linuxConfiguration: ((authenticationType == 'password') ? null : linuxConfiguration)
+      linuxConfiguration: any(authenticationType == 'password' ? null : linuxConfiguration)
     }
   }
 }
