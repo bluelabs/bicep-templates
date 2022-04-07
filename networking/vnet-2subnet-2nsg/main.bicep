@@ -269,7 +269,7 @@ resource vm2 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       computerName: vm2Name
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
-      linuxConfiguration: ((authenticationType == 'password') ? null : linuxConfiguration)
+      linuxConfiguration: any(authenticationType == 'password' ? null : linuxConfiguration)
     }
   }
 }

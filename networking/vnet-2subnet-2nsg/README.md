@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # bicep-templates
 
 ## Helpful resources
@@ -10,7 +10,6 @@
 
 ## Architecture diagram
 
-=======
 # bicep-templates
 
 ## Resources
@@ -22,5 +21,5 @@
 
 ## Architecture diagram
 
->>>>>>> 922d8b2c4550b1388ea6d23d57c503343d7fbde1
+
 ![architecture diagram](diagram.png)
